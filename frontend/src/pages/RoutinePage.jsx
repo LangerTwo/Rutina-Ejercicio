@@ -38,51 +38,71 @@ const RoutinePage = () => {
 
   const generarRutina = (respuestas) => {
     const { tiempo, dias, enfoque } = respuestas;
-
+  
     const ejercicios = {
-      abdomen: ["Planchas", "Crunches", "Elevación de piernas"],
-      piernas: ["Sentadillas", "Zancadas", "Puente de glúteos"],
-      brazos: ["Flexiones", "Fondos de tríceps", "Boxeo sombra"],
-      completo: ["Burpees", "Jumping Jacks", "Mountain Climbers"],
+      abdomen: ["Planchas", "Crunches", "Elevación de piernas", "Bicicleta", "Russian twists"],
+      piernas: ["Sentadillas", "Zancadas", "Puente de glúteos", "Steps", "Sentadilla sumo"],
+      brazos: ["Flexiones", "Fondos de tríceps", "Boxeo sombra", "Curls", "Elevaciones laterales"],
+      completo: ["Burpees", "Jumping Jacks", "Mountain Climbers", "High Knees", "Skipping"],
     };
-
-    const enfoqueFinal = enfoque?.length > 0 ? enfoque : ["completo"];
-    const ejerciciosPorDia =
-      tiempo === "10-20" ? 2 : tiempo === "20-30" ? 3 : 4;
-    const tiempoPorEjercicio =
-      tiempo === "10-20"
-        ? 10
-        : tiempo === "20-30"
-        ? 10
-        : Math.floor(45 / ejerciciosPorDia);
-
+  
+    const enfoqueMap = {
+      abdomen: "abdomen",
+      piernas: "piernas",
+      brazos: "brazos",
+      "cuerpo completo": "completo",
+    };
+  
+    const enfoqueFinal = enfoque?.length > 0 ? enfoque : ["Cuerpo completo"];
+  
+    const ejerciciosPorDia = tiempo === "10-20" ? 2 : tiempo === "20-30" ? 3 : 4;
+    const tiempoPorEjercicio = Math.floor(
+      (tiempo === "10-20" ? 20 : tiempo === "20-30" ? 30 : 45) / ejerciciosPorDia
+    );
+  
     return dias.map((dia) => {
-      const diaEjercicios = [];
-
-      const enfoqueMap = {
-        abdomen: "abdomen",
-        piernas: "piernas",
-        brazos: "brazos",
-        "cuerpo completo": "completo",
-      };
-      
+      let diaEjercicios = [];
+  
+      const totalGrupos = enfoqueFinal.length;
+      const ejerciciosPorGrupo = Math.max(1, Math.floor(ejerciciosPorDia / totalGrupos));
+  
       enfoqueFinal.forEach((parte) => {
         const clave = enfoqueMap[parte.toLowerCase()];
-        const disponibles = ejercicios[clave] || [];
-        if (disponibles.length > 0) {
-          const aleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
-          diaEjercicios.push(aleatorio);
+        const disponibles = [...(ejercicios[clave] || [])];
+  
+        // Shuffle para variedad
+        for (let i = disponibles.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [disponibles[i], disponibles[j]] = [disponibles[j], disponibles[i]];
         }
+  
+        const seleccionados = disponibles.slice(0, ejerciciosPorGrupo);
+        diaEjercicios.push(...seleccionados);
       });
-
+  
+      // Si faltan ejercicios para llenar el día, añade extras aleatorios
+      while (diaEjercicios.length < ejerciciosPorDia) {
+        const parteAleatoria = enfoqueFinal[Math.floor(Math.random() * enfoqueFinal.length)];
+        const clave = enfoqueMap[parteAleatoria.toLowerCase()];
+        const disponibles = ejercicios[clave].filter(e => !diaEjercicios.includes(e));
+        if (disponibles.length > 0) {
+          const extra = disponibles[Math.floor(Math.random() * disponibles.length)];
+          diaEjercicios.push(extra);
+        } else {
+          break;
+        }
+      }
+  
       return {
         dia,
-        ejercicios: diaEjercicios
-          .slice(0, ejerciciosPorDia)
-          .map((nombre) => ({ nombre, duracion: tiempoPorEjercicio })),
+        ejercicios: diaEjercicios.slice(0, ejerciciosPorDia).map((nombre) => ({
+          nombre,
+          duracion: tiempoPorEjercicio,
+        })),
       };
     });
   };
+  
 
   return (
     <div className="max-w-3xl mx-auto mt-10 p-6">
