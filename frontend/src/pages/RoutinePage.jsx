@@ -31,6 +31,12 @@ const RoutinePage = () => {
 
         const enfoqueFinal = enfoque?.length > 0 ? enfoque : ["completo"];
         
+        // Tiempo total por día en minutos
+        const tiempoPorDia = {
+            "10-20": 15,
+            "20-30": 25,
+            "30-45": 37,
+        }[tiempo] || 20;
 
         return dias.map((dia) => {
             const diaEjercicios = [];
@@ -44,9 +50,19 @@ const RoutinePage = () => {
                 }
             });
 
+            const ejerciciosLimitados = diaEjercicios.slice(
+                0,
+                tiempo === "10-20" ? 2 : tiempo === "20-30" ? 3 : 4
+            );
+
+            const tiempoPorEjercicio = Math.floor(tiempoPorDia / ejerciciosLimitados.length);
+
             return {
                 dia,
-                ejercicios: diaEjercicios.slice(0, tiempo === "10-20" ? 2 : tiempo === "20-30" ? 3 : 4),
+                ejercicios: ejerciciosLimitados.map((ejercicio) => ({
+                    nombre: ejercicio,
+                    minutos: tiempoPorEjercicio,
+                })),
             };
         });
     };
@@ -67,7 +83,9 @@ const RoutinePage = () => {
                             <h3 className="text-xl font-semibold text-gray-800 mb-2">{r.dia}</h3>
                             <ul className="list-disc list-inside space-y-1 text-gray-700">
                                 {r.ejercicios.map((e, idx) => (
-                                    <li key={idx}>{e}</li>
+                                    <li key={idx}>
+                                        {e.nombre} — <span className="text-sm text-gray-500">⏱️ {e.minutos} min</span>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
