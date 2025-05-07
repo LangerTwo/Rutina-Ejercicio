@@ -22,7 +22,7 @@ function App() {
             <QuestionnairePage />
           </PrivateRoute>
         } />
-        <Route path="/rutina" element={
+        <Route path="/rutina/:id" element={
           <PrivateRoute>
             <RoutinePage />
           </PrivateRoute>

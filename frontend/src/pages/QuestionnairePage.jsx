@@ -24,60 +24,101 @@ const QuestionnairePage = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Aquí puedes enviar el formulario al backend
-        localStorage.setItem("cuestionario", JSON.stringify(form));
-        console.log("Formulario enviado:", form);
-        alert("Formulario enviado con éxito ✅");
-        navigate("/rutina");
+
+        const nuevaRutina = {
+            id: Date.now(),
+            nombre: `Rutina de ${form.enfoque.join(", ") || "cuerpo completo"}`,
+            ...form,
+        };
+
+        const rutinasGuardadas = JSON.parse(localStorage.getItem("rutinas")) || [];
+        const actualizadas = [...rutinasGuardadas, nuevaRutina];
+
+        localStorage.setItem("rutinas", JSON.stringify(actualizadas));
+        localStorage.setItem("cuestionario", JSON.stringify(nuevaRutina));
+
+        alert("Rutina creada con éxito ✅");
+        navigate(`/rutina/${nuevaRutina.id}`);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Cuestionario de Rutina</h2>
+        <div className="max-w-2xl mx-auto mt-10 bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-2xl font-bold mb-6 text-center">📝 Cuestionario de Rutina</h2>
 
-            <label>Objetivo principal:</label>
-            <select name="objetivo" onChange={handleChange} required>
-                <option value="">Selecciona</option>
-                <option value="bajar">Bajar de peso</option>
-                <option value="tonificar">Tonificar</option>
-                <option value="masa">Ganar masa</option>
-                <option value="mantener">Mantenerme activo</option>
-            </select>
-
-            <label>¿Cuánto tiempo al día?</label>
-            <select name="tiempo" onChange={handleChange} required>
-                <option value="">Selecciona</option>
-                <option value="10-20">10-20 min</option>
-                <option value="20-30">20-30 min</option>
-                <option value="30-45">30-45 min</option>
-            </select>
-
-            <label>Días disponibles:</label>
-            {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((dia) => (
-                <div key={dia}>
-                <input
-                    type="checkbox"
-                    checked={form.dias.includes(dia)}
-                    onChange={() => handleCheckboxChange("dias", dia)}
-                />
-                <label>{dia}</label>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                    <label className="block font-medium mb-1">🎯 Objetivo principal:</label>
+                    <select
+                        name="objetivo"
+                        onChange={handleChange}
+                        required
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                    >
+                        <option value="">Selecciona</option>
+                        <option value="bajar">Bajar de peso</option>
+                        <option value="tonificar">Tonificar</option>
+                        <option value="masa">Ganar masa</option>
+                        <option value="mantener">Mantenerme activo</option>
+                    </select>
                 </div>
-            ))}
 
-            <label>Enfoque corporal:</label>
-                {["Abdomen", "Piernas", "Brazos", "Cuerpo completo"].map((parte) => (
-                    <div key={parte}>
-                    <input
-                        type="checkbox"
-                        checked={form.enfoque.includes(parte)}
-                        onChange={() => handleCheckboxChange("enfoque", parte)}
-                    />
-                    <label>{parte}</label>
+                <div>
+                    <label className="block font-medium mb-1">⏱️ ¿Cuánto tiempo al día?</label>
+                    <select
+                        name="tiempo"
+                        onChange={handleChange}
+                        required
+                        className="w-full border border-gray-300 rounded px-3 py-2"
+                    >
+                        <option value="">Selecciona</option>
+                        <option value="10-20">10-20 min</option>
+                        <option value="20-30">20-30 min</option>
+                        <option value="30-45">30-45 min</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label className="block font-medium mb-2">📅 Días disponibles:</label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((dia) => (
+                            <label key={dia} className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    checked={form.dias.includes(dia)}
+                                    onChange={() => handleCheckboxChange("dias", dia)}
+                                    className="accent-blue-500"
+                                />
+                                <span>{dia}</span>
+                            </label>
+                        ))}
                     </div>
-                ))}
+                </div>
 
-            <button type="submit">Generar rutina</button>
-        </form>
+                <div>
+                    <label className="block font-medium mb-2">💪 Enfoque corporal:</label>
+                    <div className="grid grid-cols-2 gap-2">
+                        {["Abdomen", "Piernas", "Brazos", "Cuerpo completo"].map((parte) => (
+                            <label key={parte} className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    checked={form.enfoque.includes(parte)}
+                                    onChange={() => handleCheckboxChange("enfoque", parte)}
+                                    className="accent-blue-500"
+                                />
+                                <span>{parte}</span>
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded font-semibold"
+                >
+                    Generar rutina
+                </button>
+            </form>
+        </div>
     );
 };
 

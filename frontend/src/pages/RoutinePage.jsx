@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const RoutinePage = () => {
     const [rutina, setRutina] = useState([]);
     const navigate = useNavigate();
+    const { id } = useParams();
 
     useEffect(() => {
-        const raw = localStorage.getItem("cuestionario");
-        if (!raw) {
-            navigate("/cuestionario");
+        const stored = JSON.parse(localStorage.getItem("rutinas")) || [];
+        const rutinaSeleccionada = stored.find((r) => r.id.toString() === id);
+
+        if (!rutinaSeleccionada) {
+            navigate("/dashboard");
             return;
         }
 
-        const data = JSON.parse(raw);
-        const nuevaRutina = generarRutina(data);
+        const nuevaRutina = generarRutina(rutinaSeleccionada);
         setRutina(nuevaRutina);
-    }, [navigate]);
+    }, [id, navigate]);
 
     const generarRutina = (respuestas) => {
         const { objetivo, tiempo, dias, enfoque } = respuestas;
@@ -28,6 +30,7 @@ const RoutinePage = () => {
         };
 
         const enfoqueFinal = enfoque?.length > 0 ? enfoque : ["completo"];
+        
 
         return dias.map((dia) => {
             const diaEjercicios = [];
@@ -49,21 +52,27 @@ const RoutinePage = () => {
     };
 
     return (
-        <div>
-            <h2>Tu rutina personalizada 💪</h2>
+        <div className="max-w-3xl mx-auto mt-10 p-6">
+            <h2 className="text-3xl font-bold text-center mb-6 text-blue-700">💪 Tu rutina personalizada</h2>
+
             {rutina.length === 0 ? (
-                <p>Cargando rutina...</p>
+                <p className="text-center text-gray-500">Cargando rutina...</p>
             ) : (
-                rutina.map((r, i) => (
-                    <div key={i}>
-                        <h3>{r.dia}</h3>
-                        <ul>
-                            {r.ejercicios.map((e, idx) => (
-                                <li key={idx}>{e}</li>
-                            ))}
-                        </ul>
-                    </div>
-                ))
+                <div className="space-y-6">
+                    {rutina.map((r, i) => (
+                        <div
+                            key={i}
+                            className="bg-white shadow-md rounded-lg p-4 border-l-4 border-blue-500"
+                        >
+                            <h3 className="text-xl font-semibold text-gray-800 mb-2">{r.dia}</h3>
+                            <ul className="list-disc list-inside space-y-1 text-gray-700">
+                                {r.ejercicios.map((e, idx) => (
+                                    <li key={idx}>{e}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     );
