@@ -59,12 +59,18 @@ const RoutinePage = () => {
     return dias.map((dia) => {
       const diaEjercicios = [];
 
+      const enfoqueMap = {
+        abdomen: "abdomen",
+        piernas: "piernas",
+        brazos: "brazos",
+        "cuerpo completo": "completo",
+      };
+      
       enfoqueFinal.forEach((parte) => {
-        const clave = parte.toLowerCase();
+        const clave = enfoqueMap[parte.toLowerCase()];
         const disponibles = ejercicios[clave] || [];
         if (disponibles.length > 0) {
-          const aleatorio =
-            disponibles[Math.floor(Math.random() * disponibles.length)];
+          const aleatorio = disponibles[Math.floor(Math.random() * disponibles.length)];
           diaEjercicios.push(aleatorio);
         }
       });

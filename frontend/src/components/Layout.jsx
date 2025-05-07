@@ -1,7 +1,7 @@
 // src/components/Layout.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Navbar = () => {
   return (
     <nav className="bg-blue-700 text-white px-4 py-3 shadow-md">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
-        <div className="text-xl font-bold">Rutinas Fit</div>
+        <div className="text-xl font-bold cursor-pointer" onClick={() => navigate("/dashboard")}>Rutinas Fit</div>
 
         <button
           className="md:hidden"
@@ -42,9 +42,9 @@ const Navbar = () => {
           <li>
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
+              className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded flex items-center gap-2"
             >
-              Cerrar sesión
+              <LogOut className="w-4 h-4"/> Cerrar sesión
             </button>
           </li>
         </ul>
@@ -64,9 +64,9 @@ const Navbar = () => {
           <li>
             <button
               onClick={handleLogout}
-              className="block w-full text-left px-4 py-2 bg-red-500 hover:bg-red-600"
+              className="flex text-left px-4 py-2 rounded bg-red-500 hover:bg-red-600 items-center gap-2"
             >
-              Cerrar sesión
+              <LogOut className="w-4 h-4"/> Cerrar sesión
             </button>
           </li>
         </ul>
