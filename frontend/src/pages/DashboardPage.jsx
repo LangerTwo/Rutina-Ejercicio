@@ -47,10 +47,7 @@ const DashboardPage = () => {
 
     return (
         <div className="p-4">
-            <h1>Bienvenido{nombre ? `, ${nombre}` : ""} 👋</h1>
-            <p>Este es tu panel principal.</p>
-
-            <button onClick={handleLogout}>Cerrar sesión</button>
+            <p className="text-xl md:text-3xl font-semibold">Este es tu panel principal.</p>
 
             <hr className="my-4" />
 
